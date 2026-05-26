@@ -1,0 +1,333 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", sans-serif;
+}
+
+:root {
+  /* ── Surfaces ── */
+  --bg-app:         #F0F6FF;   /* page shell — premium light blue */
+  --bg-surface:     #FFFFFF;   /* card / panel backgrounds — pure white */
+  --bg-elevated:    #FFFFFF;   /* modals, drawers, popovers */
+  --bg-hover:       #EFF6FF;   /* table row hover, nav item hover (blue-50) */
+  --bg-input:       #F8FAFC;   /* form field backgrounds (slate-50) */
+
+  /* ── Borders ── */
+  --border-subtle:  #F1F5F9;   /* hairline dividers, card edges (slate-100) */
+  --border-default: #E2E8F0;   /* standard component borders (slate-200) */
+  --border-focus:   #3B82F6;   /* focused input rings */
+  --border-hover:   #CBD5E1;   /* hovered component borders (slate-300) */
+
+  /* ── Text ── */
+  --text-primary:   #0F172A;   /* headings, primary labels (slate-900) */
+  --text-secondary: #475569;   /* body, supporting labels (slate-600) */
+  --text-muted:     #94A3B8;   /* placeholders, disabled (slate-400) */
+  --text-code:      #334155;   /* mono values, addresses (slate-700) */
+
+  /* ── Brand ── */
+  --brand:          #2563EB;   /* primary actions, links */
+  --brand-hover:    #1D4ED8;   /* hover state for brand */
+  --brand-glow:     rgba(37,99,235,0.25); /* focus rings, ambient glow */
+
+  /* ── Semantic Status (CRITICAL — never use flat fills) ── */
+  /* Pattern: bg = 10% opacity, text = vivid, border = 30% opacity */
+
+  /* ONLINE / PROVISIONED / INTEGRATED */
+  --status-online-bg:     rgba(16,185,129,0.1);
+  --status-online-text:   #059669;
+  --status-online-border: rgba(16,185,129,0.3);
+
+  /* OFFLINE / CRITICAL */
+  --status-offline-bg:    rgba(239,68,68,0.1);
+  --status-offline-text:  #DC2626;
+  --status-offline-border:rgba(239,68,68,0.3);
+
+  /* DISCOVERED / NEW */
+  --status-disc-bg:       rgba(168,85,247,0.1);
+  --status-disc-text:     #9333EA;
+  --status-disc-border:   rgba(168,85,247,0.3);
+
+  /* PENDING / AWAITING */
+  --status-pend-bg:       rgba(245,158,11,0.1);
+  --status-pend-text:     #D97706;
+  --status-pend-border:   rgba(245,158,11,0.3);
+
+  /* ── Elevation Shadows ── */
+  --shadow-card:    0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-drawer:  -4px 0 24px rgba(0,0,0,0.1);
+  --shadow-modal:   0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+
+/* ── Typography Fallbacks & Custom Font Scopes ── */
+.font-display {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.font-heading {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.font-sans-body {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+}
+.font-mono-telemetry {
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 400;
+}
+
+/* Base Body Style */
+body {
+  background-color: var(--bg-app);
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Animation & Motion Rules ── */
+
+/* Standard transition — applied to ALL interactive elements */
+.transition-base {
+  transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Drawer slide-in from right */
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+.drawer-enter {
+  animation: slideInRight 240ms cubic-bezier(0.32,0.72,0,1) forwards;
+}
+
+/* Fade-in for modals */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.modal-enter {
+  animation: fadeIn 180ms cubic-bezier(0.4,0,0.2,1) forwards;
+}
+
+/* Fade-in for backdrop overlay */
+@keyframes fadeInOverlay {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.overlay-fade-in {
+  animation: fadeInOverlay 180ms ease forwards;
+}
+
+/* Status pulse ring — DISCOVERED and ONLINE states only */
+@keyframes pulseRing {
+  0%   { box-shadow: 0 0 0 0 var(--status-disc-border); }
+  70%  { box-shadow: 0 0 0 6px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+.pulse-discovered {
+  animation: pulseRing 2s ease-out infinite;
+}
+
+@keyframes pulseOnlineRing {
+  0%   { box-shadow: 0 0 0 0 var(--status-online-border); }
+  70%  { box-shadow: 0 0 0 6px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+.pulse-online {
+  animation: pulseOnlineRing 2.5s ease-out infinite;
+}
+
+/* Page load — stagger card entries */
+@keyframes cardReveal {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.card-1 { animation: cardReveal 300ms 0ms   both ease-out; }
+.card-2 { animation: cardReveal 300ms 60ms  both ease-out; }
+.card-3 { animation: cardReveal 300ms 120ms both ease-out; }
+.card-4 { animation: cardReveal 300ms 180ms both ease-out; }
+
+/* Custom Leaflet Map styling for Light Mode */
+.leaflet-container {
+  background: var(--bg-surface) !important;
+}
+.leaflet-bar {
+  border: 1px solid var(--border-default) !important;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1) !important;
+}
+.leaflet-bar a {
+  background-color: var(--bg-surface) !important;
+  color: var(--text-primary) !important;
+  border-bottom: 1px solid var(--border-subtle) !important;
+}
+.leaflet-bar a:hover {
+  background-color: var(--bg-hover) !important;
+}
+.leaflet-popup-content-wrapper {
+  background: var(--bg-elevated) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-default);
+  box-shadow: var(--shadow-modal) !important;
+  border-radius: 8px !important;
+}
+.leaflet-popup-tip {
+  background: var(--bg-elevated) !important;
+}
+
+/* Scrollbar Customization */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-app);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-default);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-hover);
+}
+
+/* ==========================================
+   COMPONENT UTILITIES
+   ========================================== */
+
+/* ── Cards & Surfaces ── */
+.card-surface {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: 1rem; /* rounded-2xl */
+  box-shadow: var(--shadow-card);
+  padding: 1.25rem; /* p-5 */
+  transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.card-surface:hover {
+  border-color: var(--border-hover);
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  transform: translateY(-1px);
+}
+
+.panel-surface {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: 0.75rem; /* rounded-xl */
+  box-shadow: var(--shadow-card);
+}
+
+/* ── Buttons ── */
+.btn-primary {
+  background-color: var(--brand);
+  color: #FFFFFF;
+  font-weight: 500;
+  border-radius: 9999px; /* rounded-full */
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem; /* gap-1.5 */
+}
+.btn-primary:hover {
+  background-color: var(--brand-hover);
+  box-shadow: 0 4px 12px var(--brand-glow);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background-color: var(--bg-surface);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-default);
+  font-weight: 500;
+  border-radius: 9999px; /* rounded-full */
+  transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem; /* gap-1.5 */
+}
+.btn-secondary:hover {
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
+  border-color: var(--border-hover);
+}
+
+.btn-sm {
+  padding: 0.375rem 0.75rem; /* py-1.5 px-3 */
+  font-size: 0.75rem; /* text-xs */
+}
+.btn-md {
+  padding: 0.5rem 1rem; /* py-2 px-4 */
+  font-size: 0.875rem; /* text-sm */
+}
+.btn-lg {
+  padding: 0.625rem 1.25rem; /* py-2.5 px-5 */
+  font-size: 0.875rem; /* text-sm */
+}
+
+/* ── Badges ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem; /* gap-1.5 */
+  padding: 0.125rem 0.625rem; /* py-0.5 px-2.5 */
+  border-radius: 9999px; /* rounded-full */
+  font-size: 0.75rem; /* text-xs */
+  font-weight: 600; /* font-semibold */
+  text-transform: uppercase;
+  letter-spacing: 0.05em; /* tracking-wider */
+  border: 1px solid transparent;
+}
+
+.badge-online {
+  background-color: var(--status-online-bg);
+  color: var(--status-online-text);
+  border-color: var(--status-online-border);
+}
+.badge-offline {
+  background-color: var(--status-offline-bg);
+  color: var(--status-offline-text);
+  border-color: var(--status-offline-border);
+}
+.badge-discovered {
+  background-color: var(--status-disc-bg);
+  color: var(--status-disc-text);
+  border-color: var(--status-disc-border);
+}
+.badge-pending {
+  background-color: var(--status-pend-bg);
+  color: var(--status-pend-text);
+  border-color: var(--status-pend-border);
+}
+
+/* ── Typography & Layout ── */
+.section-header {
+  font-size: 0.75rem; /* text-xs */
+  font-weight: 600; /* font-semibold */
+  font-family: 'Inter', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.05em; /* tracking-wider */
+  color: var(--text-secondary);
+}
+
+.title-primary {
+  font-size: 1.5rem; /* text-2xl */
+  font-weight: 700; /* font-bold */
+  letter-spacing: -0.025em; /* tracking-tight */
+  color: var(--text-primary);
+}
+
+/* Glassmorphism utility for elevated panels like command palette or notifications */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-default);
+  box-shadow: var(--shadow-modal);
+}
+
